@@ -57,7 +57,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>me.shib.bundlerauditjira.Main</mainClass>
+                            <mainClass>me.shib.bugaudit.core.BugAudit</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -123,9 +123,39 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>0.9.11</version>
+            <groupId>me.shib.bugaudit</groupId>
+            <artifactId>bugaudit-probe</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>me.shib.bugaudit</groupId>
+            <artifactId>bugaudit-tracker</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>me.shib.bugaudit</groupId>
+            <artifactId>bugaudit-probe-brakeman</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>me.shib.bugaudit</groupId>
+            <artifactId>bugaudit-probe-retirejs</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>me.shib.bugaudit</groupId>
+            <artifactId>bugaudit-tracker-freshrelease</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>me.shib.bugaudit</groupId>
+            <artifactId>bugaudit-tracker-jira</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.h3xstream.findsecbugs</groupId>
+            <artifactId>findsecbugs-plugin</artifactId>
+            <version>1.8.0</version>
         </dependency>
     </dependencies>
 
