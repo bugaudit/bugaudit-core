@@ -9,7 +9,7 @@ import java.util.List;
 
 public class BugAudit {
 
-    public static List<Exception> audit() {
+    public static List<Exception> audit() throws Exception {
         List<Exception> exceptions = new ArrayList<>();
         List<BugAuditResult> results = ProbeScanner.getAuditResultsFromScanners();
         for (BugAuditResult result : results) {

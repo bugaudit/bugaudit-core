@@ -149,6 +149,11 @@
         </dependency>
         <dependency>
             <groupId>me.shib.bugaudit</groupId>
+            <artifactId>bugaudit-probe-bundleraudit</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>me.shib.bugaudit</groupId>
             <artifactId>bugaudit-probe-retirejs</artifactId>
             <version>0.0.1</version>
         </dependency>
