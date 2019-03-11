@@ -7,7 +7,7 @@
     <artifactId>bugaudit</artifactId>
     <version>0.0.1</version>
     <name>BugAudit</name>
-    <description>Core utility that connects the probe and tracker frameworks</description>
+    <description>BugAudit core that connects the scanners and trackers</description>
     <url>https://github.com/bugaudit/bugaudit</url>
 
     <issueManagement>
@@ -133,28 +133,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>me.shib.bugaudit</groupId>
-            <artifactId>bugaudit-probe</artifactId>
-            <version>0.0.1</version>
+            <groupId>me.shib.java.lib</groupId>
+            <artifactId>jsonutils</artifactId>
+            <version>0.0.2</version>
         </dependency>
         <dependency>
             <groupId>me.shib.bugaudit</groupId>
             <artifactId>bugaudit-tracker</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>me.shib.bugaudit</groupId>
-            <artifactId>bugaudit-probe-brakeman</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>me.shib.bugaudit</groupId>
-            <artifactId>bugaudit-probe-bundleraudit</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>me.shib.bugaudit</groupId>
-            <artifactId>bugaudit-probe-retirejs</artifactId>
             <version>0.0.1</version>
         </dependency>
         <dependency>
@@ -168,9 +153,24 @@
             <version>0.0.1</version>
         </dependency>
         <dependency>
-            <groupId>com.h3xstream.findsecbugs</groupId>
-            <artifactId>findsecbugs-plugin</artifactId>
-            <version>1.8.0</version>
+            <groupId>me.shib.bugaudit</groupId>
+            <artifactId>bugaudit-scanner</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>me.shib.bugaudit</groupId>
+            <artifactId>bugaudit-scanner-brakeman</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>me.shib.bugaudit</groupId>
+            <artifactId>bugaudit-scanner-bundleraudit</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>me.shib.bugaudit</groupId>
+            <artifactId>bugaudit-scanner-retirejs</artifactId>
+            <version>0.0.1</version>
         </dependency>
     </dependencies>
 
