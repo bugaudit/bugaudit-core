@@ -12,7 +12,7 @@ import java.util.*;
 
 public final class BugAuditConfig {
 
-    static transient final int maxSearchResult = 1000;
+    static transient final int maxSearchResult = 10000;
     static transient final String issueFixedComment = "This issue has been fixed.";
     static transient final String issueNotFixedComment = "Found that the issue is still not fixed.";
     static transient final String resolveRequestComment = "Please resolve this issue.";
