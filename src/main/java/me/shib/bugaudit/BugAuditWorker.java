@@ -12,7 +12,7 @@ import me.shib.bugaudit.tracker.BugAuditTracker;
 import java.io.IOException;
 import java.util.*;
 
-public final class BugAuditWorker {
+final class BugAuditWorker {
 
     private static final String batReadOnlyEnv = System.getenv("BUGAUDIT_READONLY");
     private static final boolean readOnly = (batReadOnlyEnv != null) && batReadOnlyEnv.equalsIgnoreCase("TRUE");
@@ -22,16 +22,25 @@ public final class BugAuditWorker {
     private BugAuditConfig config;
     private BugAuditTracker tracker;
     private BugAuditScanResult scanResult;
-    private int created;
-    private int updated;
 
     BugAuditWorker(BugAuditScanResult scanResult) throws BugAuditException, IOException {
         this.exceptions = new ArrayList<>();
         this.scanResult = scanResult;
         this.config = BugAuditConfig.getConfig();
-        this.tracker = BugAuditTracker.getTracker(config.getPriorityMap());
-        this.created = 0;
-        this.updated = 0;
+        this.tracker = getContextTracker();
+    }
+
+    private BugAuditTracker getContextTracker() {
+        List<String> projects = new ArrayList<>();
+        projects.add(config.getProject());
+        BatSearchQuery query = new BatSearchQuery();
+        query.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.equals, scanResult.getRepo().toString());
+        query.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.equals, scanResult.getLang().toString());
+        query.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.equals, scanResult.getTool());
+        for (String key : scanResult.getKeys()) {
+            query.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.equals, key);
+        }
+        return BugAuditTracker.getTracker(config.getPriorityMap(), query, projects);
     }
 
     private BatIssue createBatIssueForBug(Bug bug) {
@@ -56,7 +65,6 @@ public final class BugAuditWorker {
         BatIssue batIssue = tracker.createIssue(batIssueFactory);
         System.out.println("Created new issue: " + batIssue.getKey() + " - " + batIssue.getTitle() + " with priority "
                 + batIssue.getPriority().getName());
-        created++;
         return batIssue;
     }
 
@@ -93,12 +101,10 @@ public final class BugAuditWorker {
         }
         if (config.isOpeningAllowedForStatus(batIssue.getStatus())) {
             if (reopenIssue(batIssue)) {
-                updated++;
             }
         } else if (issueUpdated) {
             System.out.println("Updated the issue: " + batIssue.getKey() + " - "
                     + batIssue.getTitle());
-            updated++;
         } else {
             System.out.println("Issue up-to date: " + batIssue.getKey() + " - "
                     + batIssue.getTitle());
@@ -244,6 +250,10 @@ public final class BugAuditWorker {
     private void printChangelog() {
         StringBuilder changelog = new StringBuilder();
         changelog.append("\n[BUILD CHANGELOG] ");
+        Set<String> totalUpdates = new HashSet<>(tracker.getUpdatedIssues());
+        totalUpdates.addAll(tracker.getCommentedIssues());
+        int created = tracker.getCreatedIssues().size();
+        int updated = totalUpdates.size();
         if (created == 0 && updated == 0) {
             changelog.append("No change(s)");
         } else {
@@ -294,7 +304,6 @@ public final class BugAuditWorker {
                                     batIssue.getKey() + ": " + batIssue.getTitle());
                         } else {
                             if (closeIssue(batIssue)) {
-                                updated++;
                             } else {
                                 System.out.println(batIssue.getKey() + ": No action taken now.");
                             }

@@ -10,7 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public final class BugAuditConfig {
+final class BugAuditConfig {
 
     static transient final int maxSearchResult = 10000;
     static transient final String issueFixedComment = "This issue has been fixed.";
