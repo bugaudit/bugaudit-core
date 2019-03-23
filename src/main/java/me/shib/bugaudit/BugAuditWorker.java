@@ -14,9 +14,6 @@ import java.util.*;
 
 final class BugAuditWorker {
 
-    private static final String batReadOnlyEnv = System.getenv("BUGAUDIT_READONLY");
-    private static final boolean readOnly = (batReadOnlyEnv != null) && batReadOnlyEnv.equalsIgnoreCase("TRUE");
-
     private List<Exception> exceptions;
 
     private BugAuditConfig config;
@@ -34,16 +31,16 @@ final class BugAuditWorker {
         List<String> projects = new ArrayList<>();
         projects.add(config.getProject());
         BatSearchQuery query = new BatSearchQuery();
-        query.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.equals, scanResult.getRepo().toString());
-        query.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.equals, scanResult.getLang().toString());
-        query.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.equals, scanResult.getTool());
+        query.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, scanResult.getRepo().toString());
+        query.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, scanResult.getLang().toString());
+        query.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, scanResult.getTool());
         for (String key : scanResult.getKeys()) {
-            query.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.equals, key);
+            query.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, key);
         }
         return BugAuditTracker.getTracker(config.getPriorityMap(), query, projects);
     }
 
-    private BatIssue createBatIssueForBug(Bug bug) {
+    private void createBatIssueForBug(Bug bug) {
         Set<String> labels = new HashSet<>();
         labels.add(scanResult.getTool());
         labels.add(scanResult.getBugAuditLabel());
@@ -65,13 +62,11 @@ final class BugAuditWorker {
         BatIssue batIssue = tracker.createIssue(batIssueFactory);
         System.out.println("Created new issue: " + batIssue.getKey() + " - " + batIssue.getTitle() + " with priority "
                 + batIssue.getPriority().getName());
-        return batIssue;
     }
 
-    private BatIssue updateBatIssueForBug(BatIssue batIssue, Bug bug) {
+    private void updateBatIssueForBug(BatIssue batIssue, Bug bug) {
         if (config.isIssueIgnorable(batIssue)) {
             System.out.println("Ignoring the issue: " + batIssue.getKey());
-            return batIssue;
         }
         boolean issueUpdated = false;
         BatIssueFactory batIssueFactory = new BatIssueFactory();
@@ -100,8 +95,7 @@ final class BugAuditWorker {
             }
         }
         if (config.isOpeningAllowedForStatus(batIssue.getStatus())) {
-            if (reopenIssue(batIssue)) {
-            }
+            reopenIssue(batIssue);
         } else if (issueUpdated) {
             System.out.println("Updated the issue: " + batIssue.getKey() + " - "
                     + batIssue.getTitle());
@@ -109,7 +103,6 @@ final class BugAuditWorker {
             System.out.println("Issue up-to date: " + batIssue.getKey() + " - "
                     + batIssue.getTitle());
         }
-        return batIssue;
     }
 
     private List<String> toLowerCase(List<String> list) {
@@ -164,7 +157,7 @@ final class BugAuditWorker {
         return transitioned;
     }
 
-    private boolean reopenIssue(BatIssue issue) {
+    private void reopenIssue(BatIssue issue) {
         System.out.println("Issue: " + issue.getKey() + " was resolved, but not actually fixed.");
         boolean transitioned = false;
         if (config.toOpen().isStatusTransferable()) {
@@ -190,9 +183,7 @@ final class BugAuditWorker {
         }
         if (!comment.toString().isEmpty()) {
             issue.addComment(new BugAuditContent(comment.toString()));
-            return true;
         }
-        return transitioned;
     }
 
     private boolean transitionIssue(List<String> transitions, BatIssue issue) {
@@ -218,28 +209,19 @@ final class BugAuditWorker {
     }
 
     private void processBug(Bug bug, BugAuditScanResult result) throws BugAuditException {
-        BatSearchQuery searchQuery = new BatSearchQuery(BatSearchQuery.Condition.type, BatSearchQuery.Operator.equals, config.getIssueType());
+        BatSearchQuery searchQuery = new BatSearchQuery(BatSearchQuery.Condition.type, BatSearchQuery.Operator.matching, config.getIssueType());
         Set<String> searchLabels = new HashSet<>(result.getKeys());
         searchLabels.addAll(bug.getKeys());
         searchLabels.add(result.getTool());
         searchLabels.add(result.getBugAuditLabel());
         searchLabels.add(result.getLang().toString());
         searchLabels.add(result.getRepo().toString());
-        searchQuery.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.equals, new ArrayList<>(searchLabels));
+        searchQuery.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, new ArrayList<>(searchLabels));
         List<BatIssue> batIssues = tracker.searchBatIssues(config.getProject(), searchQuery, BugAuditConfig.maxSearchResult);
         if (batIssues.size() == 0) {
-            if (readOnly) {
-                System.out.println("Read-Only Mode: Skipped creating issue: " + bug.getTitle());
-            } else {
-                createBatIssueForBug(bug);
-            }
+            createBatIssueForBug(bug);
         } else if (batIssues.size() == 1) {
-            if (readOnly) {
-                System.out.println("Read-Only Mode: Skipped updating issue: " +
-                        batIssues.get(0).getKey() + ": " + batIssues.get(0).getTitle());
-            } else {
-                updateBatIssueForBug(batIssues.get(0), bug);
-            }
+            updateBatIssueForBug(batIssues.get(0), bug);
         } else {
             throw new BugAuditException("More than one issue listed:\n"
                     + "Labels: " + Arrays.toString(bug.getKeys().toArray()) + "\n"
@@ -287,26 +269,20 @@ final class BugAuditWorker {
             }
         }
         if (config.isClosingAllowed()) {
-            BatSearchQuery searchQuery = new BatSearchQuery(BatSearchQuery.Condition.type, BatSearchQuery.Operator.equals, config.getIssueType());
+            BatSearchQuery searchQuery = new BatSearchQuery(BatSearchQuery.Condition.type, BatSearchQuery.Operator.matching, config.getIssueType());
             List<String> tags = new ArrayList<>(scanResult.getKeys());
             tags.add(scanResult.getTool());
             tags.add(scanResult.getBugAuditLabel());
             tags.add(scanResult.getLang().toString());
             tags.add(scanResult.getRepo().toString());
-            searchQuery.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.equals, tags);
-            searchQuery.add(BatSearchQuery.Condition.status, BatSearchQuery.Operator.not, config.getClosedStatuses());
+            searchQuery.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, tags);
+            searchQuery.add(BatSearchQuery.Condition.status, BatSearchQuery.Operator.not_matching, config.getClosedStatuses());
             List<BatIssue> batIssues = tracker.searchBatIssues(config.getProject(), searchQuery, BugAuditConfig.maxSearchResult);
             for (BatIssue batIssue : batIssues) {
                 try {
                     if (!isVulnerabilityExists(batIssue, scanResult.getBugs())) {
-                        if (readOnly) {
-                            System.out.println("Read-Only Mode: Skipped closing issue: " +
-                                    batIssue.getKey() + ": " + batIssue.getTitle());
-                        } else {
-                            if (closeIssue(batIssue)) {
-                            } else {
-                                System.out.println(batIssue.getKey() + ": No action taken now.");
-                            }
+                        if (!closeIssue(batIssue)) {
+                            System.out.println(batIssue.getKey() + ": No action taken now.");
                         }
                     }
                 } catch (Exception e) {

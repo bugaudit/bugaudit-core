@@ -6,7 +6,7 @@ import me.shib.bugaudit.scanner.GitRepo;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BugAudit {
+public final class BugAudit {
 
     public static synchronized List<Exception> audit() throws Exception {
         List<Exception> exceptions = new ArrayList<>();
