@@ -8,17 +8,17 @@
     <version>0.0.1</version>
     <name>BugAudit</name>
     <description>BugAudit core that connects the scanners and trackers</description>
-    <url>https://github.com/bugaudit/bugaudit</url>
+    <url>https://github.com/${project.owner.id}/${project.artifactId}</url>
 
     <issueManagement>
-        <url>https://github.com/bugaudit/bugaudit/issues</url>
+        <url>https://github.com/${project.owner.id}/${project.artifactId}/issues</url>
         <system>GitHub Issues</system>
     </issueManagement>
 
     <scm>
-        <url>https://github.com/bugaudit/bugaudit</url>
-        <connection>scm:git:https://github.com/bugaudit/bugaudit.git</connection>
-        <developerConnection>scm:git:git@github.com:bugaudit/bugaudit.git</developerConnection>
+        <url>https://github.com/${project.owner.id}/${project.artifactId}</url>
+        <connection>scm:git:https://github.com/${project.owner.id}/${project.artifactId}.git</connection>
+        <developerConnection>scm:git:git@github.com:${project.owner.id}/${project.artifactId}.git</developerConnection>
     </scm>
 
     <developers>
@@ -31,7 +31,17 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.owner.id>bugaudit</project.owner.id>
     </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>bintray-${project.owner.id}-maven</id>
+            <name>${project.owner.id}-maven</name>
+            <url>https://api.bintray.com/maven/${project.owner.id}/maven/${project.artifactId}/;publish=1;override=1
+            </url>
+        </repository>
+    </distributionManagement>
 
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
@@ -98,7 +108,7 @@
                         </goals>
                         <inherited>false</inherited>
                         <configuration>
-                            <overwriteArtifact>true</overwriteArtifact>
+                            <deleteRelease>true</deleteRelease>
                             <releaseName>${project.artifactId} - ${project.version}</releaseName>
                             <description>Use the maven dependency
                                 [![Maven
@@ -122,6 +132,17 @@
             </plugin>
         </plugins>
     </build>
+
+    <repositories>
+        <repository>
+            <id>${project.distributionManagement.repository.id}</id>
+            <name>bintray</name>
+            <url>https://dl.bintray.com/${project.owner.id}/maven</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
