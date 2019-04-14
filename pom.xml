@@ -130,6 +130,35 @@
                     <goals>deploy</goals>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>me.shib.plugin</groupId>
+                <artifactId>text-file-writer-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>text-file-writer</goal>
+                        </goals>
+                        <configuration>
+                            <charset>UTF-8</charset>
+                            <files>
+                                <file>
+                                    <destination>README.md</destination>
+                                    <overwrite>true</overwrite>
+                                    <lines>
+                                        <line># ${project.name}</line>
+                                        <line>[![Maven Central](https://maven-badges.herokuapp.com/maven-central/${project.groupId}/${project.artifactId}/badge.svg)](https://maven-badges.herokuapp.com/maven-central/${project.groupId}/${project.artifactId})</line>
+                                        <line>[![Build Status](https://gitlab.com/${project.owner.id}/${project.artifactId}/badges/master/pipeline.svg)](https://gitlab.com/${project.owner.id}/${project.artifactId}/pipelines)</line>
+                                        <line></line>
+                                        <line>${project.description}</line>
+                                    </lines>
+                                </file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 

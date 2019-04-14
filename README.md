@@ -1,5 +1,5 @@
 # BugAudit
-[![Build Status](https://travis-ci.org/bugaudit/bugaudit.svg)](https://travis-ci.org/bugaudit/bugaudit)
-[![Percentage of issues still open](http://isitmaintained.com/badge/open/bugaudit/bugaudit.svg)](http://isitmaintained.com/project/bugaudit/bugaudit "Percentage of issues still open")
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/me.shib.bugaudit/bugaudit/badge.svg)](https://maven-badges.herokuapp.com/maven-central/me.shib.bugaudit/bugaudit)
+[![Build Status](https://gitlab.com/bugaudit/bugaudit/badges/master/pipeline.svg)](https://gitlab.com/bugaudit/bugaudit/pipelines)
 
 BugAudit core that connects the scanners and trackers

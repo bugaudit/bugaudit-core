@@ -307,7 +307,7 @@ final class BugAuditConfig {
                     }
                 }
                 long commentBeforeTime = new Date().getTime() - commentInterval * oneDay;
-                return (lastComment == null) || (lastComment.getUpdated().getTime() < commentBeforeTime);
+                return (lastComment == null) || (lastComment.getUpdatedDate().getTime() < commentBeforeTime);
             }
             return false;
         }
