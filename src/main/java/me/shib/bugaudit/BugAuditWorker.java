@@ -31,12 +31,12 @@ final class BugAuditWorker {
         List<String> projects = new ArrayList<>();
         projects.add(config.getProject());
         BatSearchQuery query = new BatSearchQuery();
-        query.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, scanResult.getRepo().toString());
-        query.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, scanResult.getLang().toString());
-        query.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, scanResult.getTool());
         for (String key : scanResult.getKeys()) {
             query.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, key);
         }
+        query.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, scanResult.getLang().toString());
+        query.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, scanResult.getTool());
+        query.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, scanResult.getRepo().toString());
         return BugAuditTracker.getTracker(config.getPriorityMap(), query, projects);
     }
 
