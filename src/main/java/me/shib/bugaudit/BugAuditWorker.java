@@ -210,13 +210,13 @@ final class BugAuditWorker {
 
     private void processBug(Bug bug, BugAuditScanResult result) throws BugAuditException {
         BatSearchQuery searchQuery = new BatSearchQuery(BatSearchQuery.Condition.type, BatSearchQuery.Operator.matching, config.getIssueType());
-        Set<String> searchLabels = new HashSet<>(result.getKeys());
-        searchLabels.addAll(bug.getKeys());
-        searchLabels.add(result.getTool());
-        searchLabels.add(result.getBugAuditLabel());
-        searchLabels.add(result.getLang().toString());
-        searchLabels.add(result.getRepo().toString());
-        searchQuery.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, new ArrayList<>(searchLabels));
+        searchQuery.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, result.getRepo().toString());
+        searchQuery.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, result.getLang().toString());
+        searchQuery.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, result.getBugAuditLabel());
+        searchQuery.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, result.getTool());
+        for (String key : bug.getKeys()) {
+            searchQuery.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, key);
+        }
         List<BatIssue> batIssues = tracker.searchBatIssues(config.getProject(), searchQuery, BugAuditConfig.maxSearchResult);
         if (batIssues.size() == 0) {
             createBatIssueForBug(bug);
@@ -270,12 +270,10 @@ final class BugAuditWorker {
         }
         if (config.isClosingAllowed()) {
             BatSearchQuery searchQuery = new BatSearchQuery(BatSearchQuery.Condition.type, BatSearchQuery.Operator.matching, config.getIssueType());
-            List<String> tags = new ArrayList<>(scanResult.getKeys());
-            tags.add(scanResult.getTool());
-            tags.add(scanResult.getBugAuditLabel());
-            tags.add(scanResult.getLang().toString());
-            tags.add(scanResult.getRepo().toString());
-            searchQuery.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, tags);
+            searchQuery.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, scanResult.getRepo().toString());
+            searchQuery.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, scanResult.getTool());
+            searchQuery.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, scanResult.getBugAuditLabel());
+            searchQuery.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, scanResult.getLang().toString());
             searchQuery.add(BatSearchQuery.Condition.status, BatSearchQuery.Operator.not_matching, config.getClosedStatuses());
             List<BatIssue> batIssues = tracker.searchBatIssues(config.getProject(), searchQuery, BugAuditConfig.maxSearchResult);
             for (BatIssue batIssue : batIssues) {
