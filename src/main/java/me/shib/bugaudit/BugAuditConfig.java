@@ -36,7 +36,7 @@ final class BugAuditConfig {
     private boolean reprioritizeAllowed;
     private boolean deprioritizeAllowed;
     private Map<String, Integer> priorityMap;
-    private Map<String, String> customFields;
+    private Map<String, Object> customFields;
     private Users users;
     private HashMap<String, List<String>> transitions;
     private List<String> openStatuses;
@@ -248,7 +248,7 @@ final class BugAuditConfig {
         return this.closedStatuses;
     }
 
-    Map<String, String> getCustomFields() {
+    Map<String, Object> getCustomFields() {
         return customFields;
     }
 

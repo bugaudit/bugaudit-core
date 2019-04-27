@@ -1,5 +1,5 @@
 {
-  "trackerName": "FreshreleaseTracker",
+  "trackerName": "Jira",
   "project": "TEST",
   "issueType": "Bug",
   "summaryUpdateAllowed": true,
@@ -23,112 +23,44 @@
     ]
   },
   "transitions": {
-    "In Testing (Branch)": [
-      "Verified in Branch",
-      "Reopened"
-    ],
-    "Done": [
-      "Reopened",
-      "Security Verification In Progress"
-    ],
-    "Security Verified": [
-      "Reporter Verification",
-      "Closed"
-    ],
-    "Reopened": [
-      "In Progress",
-      "Deferred"
-    ],
-    "In Testing (Prestaging)": [
-      "Verified in pre-staging",
-      "Reopened"
-    ],
-    "On Hold": [
-      "Ready to Test",
-      "In Progress"
-    ],
-    "Deferred": [
-      "In Progress"
-    ],
-    "Security Verification In Progress": [
-      "Security Verified"
-    ],
-    "Verified in pre-staging": [
-      "Deployed to few customers",
-      "In Testing (Staging)"
-    ],
-    "In Progress": [
-      "In Review",
-      "Open"
-    ],
-    "Available to all customers": [
-      "Done"
-    ],
     "Open": [
       "In Progress",
-      "Deferred"
+      "Invalid"
     ],
-    "Ready to Test": [
-      "Reopened",
-      "In Testing (Prestaging)",
-      "In Testing (Staging)",
-      "In Testing (Branch)"
-    ],
-    "Reporter Verification": [
-      "Closed"
-    ],
-    "In Review": [
-      "In Progress",
-      "Review Changes Required",
-      "Dev Complete"
-    ],
-    "In Testing (Staging)": [
-      "Reopened",
-      "Deployed to few customers"
-    ],
-    "Closed": [
-      "Reopened"
-    ],
-    "Dev Complete": [
-      "Ready to Test",
-      "On Hold"
-    ],
-    "Create": [
-      "Open"
-    ],
-    "Review Changes Required": [
-      "In Progress"
-    ],
-    "Verified in Branch": [
-      "In Testing (Prestaging)"
-    ],
-    "Deployed to few customers": [
-      "Available to all customers"
+    "In Progress": [
+      "Done",
+      "Invalid"
     ],
     "Invalid": [
-      "Closed",
-      "Reopened"
+      "Closed"
+    ],
+    "Done": [
+      "Verified",
+      "Open"
+    ],
+    "Verified": [
+      "Closed"
+    ],
+    "Closed": [
+      "Open"
     ]
   },
   "openStatuses": [
-    "Reopened",
+    "In Progress",
     "Open"
   ],
   "resolvedStatuses": [
-    "Deployed to few customers",
-    "Available to all customers",
+    "Verified",
     "Done"
   ],
   "closedStatuses": [
-    "Closed",
-    "Security Verified"
+    "Closed"
   ],
   "ignorableLabels": [
     "bugaudit-ignore",
-    "ignored-bug"
+    "bugaudit-skip"
   ],
   "ignorableStatuses": [
-    "Deferred",
     "Invalid"
   ],
   "toOpen": {
