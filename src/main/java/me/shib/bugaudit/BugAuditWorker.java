@@ -84,8 +84,13 @@ final class BugAuditWorker {
         if (((batIssue.getPriority().getValue() < bug.getPriority()) && (config.isReprioritizeAllowed()))
                 || ((batIssue.getPriority().getValue() > bug.getPriority()) && (config.isDeprioritizeAllowed()))) {
             batIssueFactory.setPriority(bug.getPriority());
-            System.out.println("Reprioritizing " + batIssue.getKey() + " to " + tracker.getPriorityName(bug.getPriority()) + " based on actual priority.");
-            comment.append("Reprioritizing to **").append(tracker.getPriorityName(bug.getPriority())).append("** based on actual priority.");
+            System.out.println("Prioritizing " + batIssue.getKey() + " to " + tracker.getPriorityName(bug.getPriority()) + " based on actual priority.");
+            comment.append("Prioritizing to **").append(tracker.getPriorityName(bug.getPriority())).append("** based on actual priority.");
+            issueUpdated = true;
+        } else if ((batIssue.getPriority().getValue() > bug.getPriority()) && (config.isDeprioritizeAllowed())) {
+            batIssueFactory.setPriority(bug.getPriority());
+            System.out.println("Reducing priority " + batIssue.getKey() + " to " + tracker.getPriorityName(bug.getPriority()) + " based on actual priority.");
+            comment.append("Reducing priority to **").append(tracker.getPriorityName(bug.getPriority())).append("** based on actual priority.");
             issueUpdated = true;
         }
         if (issueUpdated) {
@@ -198,7 +203,7 @@ final class BugAuditWorker {
                     moveStatus.setStatus(transitions.get(i));
                     tracker.updateIssue(issue, moveStatus);
                 }
-                System.out.print(consoleLog.toString());
+                System.out.println(consoleLog.toString());
                 return true;
             }
         } catch (Exception e) {
