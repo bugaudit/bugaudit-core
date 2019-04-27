@@ -40,7 +40,7 @@ final class BugAuditWorker {
         return BugAuditTracker.getTracker(config.getPriorityMap(), query, projects);
     }
 
-    private void createBatIssueForBug(Bug bug) {
+    private void createBatIssueForBug(Bug bug) throws BugAuditException {
         Set<String> labels = new HashSet<>();
         labels.add(scanResult.getTool());
         labels.add(scanResult.getBugAuditLabel());
@@ -64,7 +64,7 @@ final class BugAuditWorker {
                 + batIssue.getPriority().getName());
     }
 
-    private void updateBatIssueForBug(BatIssue batIssue, Bug bug) {
+    private void updateBatIssueForBug(BatIssue batIssue, Bug bug) throws BugAuditException {
         if (config.isIssueIgnorable(batIssue)) {
             System.out.println("Ignoring the issue: " + batIssue.getKey());
         }
@@ -127,7 +127,7 @@ final class BugAuditWorker {
         return false;
     }
 
-    private boolean closeIssue(BatIssue issue) {
+    private boolean closeIssue(BatIssue issue) throws BugAuditException {
         if (config.isIssueIgnorable(issue)) {
             System.out.println("Ignoring the issue: " + issue.getKey());
             return false;
@@ -162,7 +162,7 @@ final class BugAuditWorker {
         return transitioned;
     }
 
-    private void reopenIssue(BatIssue issue) {
+    private void reopenIssue(BatIssue issue) throws BugAuditException {
         System.out.println("Issue: " + issue.getKey() + " was resolved, but not actually fixed.");
         boolean transitioned = false;
         if (config.toOpen().isStatusTransferable()) {
@@ -263,7 +263,7 @@ final class BugAuditWorker {
         System.out.println(changelog);
     }
 
-    void processResult() {
+    void processResult() throws BugAuditException {
         System.out.println("Vulnerabilities found: " + scanResult.getBugs().size());
         for (Bug bug : scanResult.getBugs()) {
             try {

@@ -297,7 +297,7 @@ final class BugAuditConfig {
             return commentable;
         }
 
-        boolean isCommentable(BatIssue issue, BugAuditContent commentToAdd) {
+        boolean isCommentable(BatIssue issue, BugAuditContent commentToAdd) throws BugAuditException {
             if (commentable) {
                 issue.refresh();
                 BatComment lastComment = null;
