@@ -64,6 +64,15 @@ final class BugAuditWorker {
                 + batIssue.getPriority().getName());
     }
 
+    private boolean isLabelExsitingInSet(Set<String> fromIssue, String labelForAvailabilityCheck) {
+        for (String label : fromIssue) {
+            if (label.equalsIgnoreCase(labelForAvailabilityCheck)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void updateBatIssueForBug(BatIssue batIssue, Bug bug) throws BugAuditException {
         if (config.isIssueIgnorable(batIssue)) {
             System.out.println("Ignoring the issue: " + batIssue.getKey());
@@ -79,6 +88,18 @@ final class BugAuditWorker {
                 !tracker.areContentsMatching(bug.getDescription(), batIssue.getDescription())) {
             batIssueFactory.setDescription(bug.getDescription());
             issueUpdated = true;
+        }
+        if (config.isLabelUpdateAllowed()) {
+            Set<String> updateSet = new HashSet<>(batIssue.getLabels());
+            for (String labelFromBug : bug.getTags()) {
+                if (!isLabelExsitingInSet(updateSet, labelFromBug)) {
+                    updateSet.add(labelFromBug);
+                }
+            }
+            if (updateSet.size() != batIssue.getLabels().size()) {
+                batIssueFactory.setLabels(new ArrayList<>(updateSet));
+                issueUpdated = true;
+            }
         }
         StringBuilder comment = new StringBuilder();
         if (((batIssue.getPriority().getValue() < bug.getPriority()) && (config.isReprioritizeAllowed()))

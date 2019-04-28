@@ -4,6 +4,7 @@
   "issueType": "Bug",
   "summaryUpdateAllowed": true,
   "descriptionUpdateAllowed": true,
+  "labelUpdateAllowed": true,
   "reprioritizeAllowed": true,
   "deprioritizeAllowed": true,
   "priorityMap": {

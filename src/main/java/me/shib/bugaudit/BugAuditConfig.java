@@ -33,6 +33,7 @@ final class BugAuditConfig {
     private String issueType;
     private boolean summaryUpdateAllowed;
     private boolean descriptionUpdateAllowed;
+    private boolean labelUpdateAllowed;
     private boolean reprioritizeAllowed;
     private boolean deprioritizeAllowed;
     private Map<String, Integer> priorityMap;
@@ -190,6 +191,10 @@ final class BugAuditConfig {
 
     boolean isDescriptionUpdateAllowed() {
         return this.descriptionUpdateAllowed;
+    }
+
+    boolean isLabelUpdateAllowed() {
+        return labelUpdateAllowed;
     }
 
     boolean isReprioritizeAllowed() {
