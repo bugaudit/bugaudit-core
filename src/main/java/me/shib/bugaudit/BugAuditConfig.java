@@ -1,12 +1,15 @@
 package me.shib.bugaudit;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import me.shib.bugaudit.commons.BugAuditContent;
 import me.shib.bugaudit.commons.BugAuditException;
 import me.shib.bugaudit.tracker.BatComment;
 import me.shib.bugaudit.tracker.BatIssue;
-import me.shib.java.lib.jsonconfig.JsonConfig;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
@@ -26,6 +29,7 @@ final class BugAuditConfig {
     private static transient final String batAssigneeEnv = "BUGAUDIT_ASSIGNEE";
     private static transient final String batSubscribersEnv = "BUGAUDIT_SUBSCRIBERS";
     private static transient final String defaultBatConfigFilePath = "bugaudit-config.json";
+    private static transient final Gson gson = new GsonBuilder().create();
 
     private static transient BugAuditConfig config;
 
@@ -48,14 +52,28 @@ final class BugAuditConfig {
     private UpdateActions toOpen;
     private UpdateActions toClose;
 
+    private static String readFromFile(File file) throws IOException {
+        if (!file.exists() || file.isDirectory()) {
+            return "";
+        }
+        StringBuilder contentBuilder = new StringBuilder();
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        String line;
+        while ((line = br.readLine()) != null) {
+            contentBuilder.append(line).append("\n");
+        }
+        br.close();
+        return contentBuilder.toString();
+    }
+
     static synchronized BugAuditConfig getConfig() throws BugAuditException, IOException {
         if (config == null) {
             String configFilePath = System.getenv(batConfigFileEnv);
             if (configFilePath == null || configFilePath.isEmpty()) {
                 configFilePath = defaultBatConfigFilePath;
             }
-            JsonConfig jsonConfig = JsonConfig.getJsonConfig(new File(configFilePath));
-            config = jsonConfig.get(BugAuditConfig.class);
+            String jsonConfig = readFromFile(new File(configFilePath));
+            config = gson.fromJson(jsonConfig, BugAuditConfig.class);
             config.validate();
         }
         return config;
