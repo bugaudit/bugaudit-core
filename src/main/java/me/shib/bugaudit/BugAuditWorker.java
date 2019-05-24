@@ -80,6 +80,10 @@ final class BugAuditWorker {
         boolean issueUpdated = false;
         BatIssueFactory batIssueFactory = new BatIssueFactory();
         batIssueFactory.setProject(config.getProject());
+        if (batIssue.getAssignee() == null && config.getUsers().getAssignee() != null) {
+            batIssueFactory.setAssignee(config.getUsers().getAssignee());
+            issueUpdated = true;
+        }
         if (config.isSummaryUpdateAllowed() && !batIssue.getTitle().contentEquals(bug.getTitle())) {
             batIssueFactory.setTitle(bug.getTitle());
             issueUpdated = true;
