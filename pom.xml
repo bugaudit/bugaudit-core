@@ -5,7 +5,7 @@
 
     <groupId>me.shib.bugaudit</groupId>
     <artifactId>bugaudit-core</artifactId>
-    <version>0.1</version>
+    <version>0.2</version>
     <name>BugAudit Core</name>
     <description>BugAudit core that connects the scanners and trackers</description>
     <url>https://github.com/${project.owner.id}/${project.artifactId}</url>
@@ -177,37 +177,37 @@
         <dependency>
             <groupId>me.shib.bugaudit</groupId>
             <artifactId>bugaudit-scanner</artifactId>
-            <version>0.1</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>me.shib.bugaudit</groupId>
             <artifactId>bugaudit-scanner-bundleraudit</artifactId>
-            <version>0.1</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>me.shib.bugaudit</groupId>
             <artifactId>bugaudit-scanner-brakeman</artifactId>
-            <version>0.1</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>me.shib.bugaudit</groupId>
             <artifactId>bugaudit-scanner-retirejs</artifactId>
-            <version>0.1</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>me.shib.bugaudit</groupId>
             <artifactId>bugaudit-tracker</artifactId>
-            <version>0.1</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>me.shib.bugaudit</groupId>
             <artifactId>bugaudit-tracker-jira</artifactId>
-            <version>0.1</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>me.shib.bugaudit</groupId>
             <artifactId>bugaudit-tracker-freshrelease</artifactId>
-            <version>0.1</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
