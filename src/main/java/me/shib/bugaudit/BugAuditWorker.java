@@ -247,7 +247,7 @@ final class BugAuditWorker {
         for (String key : bug.getKeys()) {
             searchQuery.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, key);
         }
-        List<BatIssue> batIssues = tracker.searchBatIssues(config.getProject(), searchQuery, BugAuditConfig.maxSearchResult);
+        List<BatIssue> batIssues = tracker.searchBatIssues(config.getProject(), searchQuery);
         if (batIssues.size() == 0) {
             createBatIssueForBug(bug);
         } else if (batIssues.size() == 1) {
@@ -305,7 +305,7 @@ final class BugAuditWorker {
             searchQuery.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, scanResult.getBugAuditLabel());
             searchQuery.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, scanResult.getLang().toString());
             searchQuery.add(BatSearchQuery.Condition.status, BatSearchQuery.Operator.not_matching, config.getClosedStatuses());
-            List<BatIssue> batIssues = tracker.searchBatIssues(config.getProject(), searchQuery, BugAuditConfig.maxSearchResult);
+            List<BatIssue> batIssues = tracker.searchBatIssues(config.getProject(), searchQuery);
             for (BatIssue batIssue : batIssues) {
                 try {
                     if (!isVulnerabilityExists(batIssue, scanResult.getBugs())) {
