@@ -7,6 +7,7 @@ variables:
 Deploying to Bintray:
   stage: deploy
   script:
+    - curl -L -s http://shibme.github.io/gitlab-ci-maven-dependency-builder/build-dependency.sh | bash -s shibme/freshrelease-api
     - mvn $MAVEN_CLI_OPTS clean deploy
   only:
     - master
