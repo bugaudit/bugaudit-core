@@ -259,33 +259,9 @@ final class BugAuditWorker {
         }
     }
 
-    private void printChangelog() {
-        StringBuilder changelog = new StringBuilder();
-        changelog.append("\n[BUILD CHANGELOG] ");
-        Set<String> totalUpdates = new HashSet<>(tracker.getUpdatedIssues());
-        totalUpdates.addAll(tracker.getCommentedIssues());
-        int created = tracker.getCreatedIssues().size();
-        int updated = totalUpdates.size();
-        if (created == 0 && updated == 0) {
-            changelog.append("No change(s)");
-        } else {
-            if (created > 0) {
-                changelog.append("Created ").append(created).append(" issue");
-                if (created > 1) {
-                    changelog.append("s");
-                }
-                if (updated > 0) {
-                    changelog.append(" and ");
-                }
-            }
-            if (updated > 0) {
-                changelog.append("Updated ").append(updated).append(" issue");
-                if (updated > 1) {
-                    changelog.append("s");
-                }
-            }
-        }
-        System.out.println(changelog);
+    ProcessedCount getProcessedCount() {
+        return new ProcessedCount(tracker.getCreatedIssues().size(),
+                tracker.getUpdatedIssues().size(), tracker.getCommentedIssues().size());
     }
 
     void processResult() throws BugAuditException {
@@ -319,10 +295,33 @@ final class BugAuditWorker {
                 }
             }
         }
-        printChangelog();
     }
 
     List<Exception> getExceptions() {
         return exceptions;
+    }
+
+    final class ProcessedCount {
+        private int created;
+        private int updated;
+        private int commented;
+
+        ProcessedCount(int created, int updated, int commented) {
+            this.created = created;
+            this.updated = updated;
+            this.commented = commented;
+        }
+
+        int getCreated() {
+            return created;
+        }
+
+        int getUpdated() {
+            return updated;
+        }
+
+        int getCommented() {
+            return commented;
+        }
     }
 }
