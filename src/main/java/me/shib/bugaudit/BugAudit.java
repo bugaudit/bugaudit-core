@@ -8,13 +8,13 @@ import java.util.List;
 
 public final class BugAudit {
 
-    public static synchronized List<Exception> audit() throws Exception {
+    public static synchronized List<Exception> audit() {
         List<Exception> exceptions = new ArrayList<>();
         List<BugAuditScanner> scanners = BugAuditScanner.getScanners(GitRepo.getRepo());
         for (BugAuditScanner scanner : scanners) {
-            System.out.println("Now running scanner: " + scanner.getTool());
-            scanner.scan();
             try {
+                System.out.println("Now running scanner: " + scanner.getTool());
+                scanner.scan();
                 BugAuditWorker bugAuditWorker = new BugAuditWorker(scanner.getBugAuditScanResult());
                 bugAuditWorker.processResult();
                 exceptions.addAll(bugAuditWorker.getExceptions());
