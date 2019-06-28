@@ -25,6 +25,7 @@ public final class BugAudit {
                 exceptions.add(e);
             }
         }
+        printChangelog(processedCounts);
         return exceptions;
     }
 
