@@ -181,32 +181,7 @@
         </dependency>
         <dependency>
             <groupId>me.shib.bugaudit</groupId>
-            <artifactId>bugaudit-scanner-bundleraudit</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>me.shib.bugaudit</groupId>
-            <artifactId>bugaudit-scanner-brakeman</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>me.shib.bugaudit</groupId>
-            <artifactId>bugaudit-scanner-retirejs</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>me.shib.bugaudit</groupId>
             <artifactId>bugaudit-tracker</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>me.shib.bugaudit</groupId>
-            <artifactId>bugaudit-tracker-jira</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>me.shib.bugaudit</groupId>
-            <artifactId>bugaudit-tracker-freshrelease</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
