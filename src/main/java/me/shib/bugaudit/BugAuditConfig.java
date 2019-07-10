@@ -7,10 +7,9 @@ import me.shib.bugaudit.commons.BugAuditException;
 import me.shib.bugaudit.tracker.BatComment;
 import me.shib.bugaudit.tracker.BatIssue;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.*;
 
 final class BugAuditConfig {
@@ -22,13 +21,37 @@ final class BugAuditConfig {
     static transient final String closingNotificationComment = "Closing this issue after verification.";
     static transient final String reopeningNotificationComment = "Reopening this issue as it is not fixed.";
 
-    private static transient final String batConfigFileEnv = "BUGAUDIT_CONFIG";
+    private static transient final String bugauditConfigFileEnv = "BUGAUDIT_CONFIG";
+    private static transient final String bugauditConfigURLEnv = "BUGAUDIT_CONFIG_URL";
     private static transient final String batProjectEnv = "BUGAUDIT_PROJECT";
     private static transient final String batIssueTypeEnv = "BUGAUDIT_ISSUETYPE";
     private static transient final String batAssigneeEnv = "BUGAUDIT_ASSIGNEE";
     private static transient final String batSubscribersEnv = "BUGAUDIT_SUBSCRIBERS";
-    private static transient final String defaultBatConfigFilePath = "bugaudit-config.json";
     private static transient final Gson gson = new GsonBuilder().create();
+    private static transient final String defaultConfigJson = "{\"summaryUpdateAllowed\":true," +
+            "\"descriptionUpdateAllowed\":true,\"reprioritizeAllowed\":true,\"deprioritizeAllowed\":false," +
+            "\"priorityMap\":{\"Urgent\":1.0,\"High\":2.0,\"Medium\":3.0,\"Low\":4.0}," +
+            "\"transitions\":{\"In Testing (Branch)\":[\"Reopened\",\"Verified in Branch\"]," +
+            "\"Risk Accepted\":[\"Reopened\",\"In Progress\"],\"Done\":[\"Reopened\"," +
+            "\"Security Verification In Progress\"],\"Security Verified\":[\"Closed\"," +
+            "\"Reporter verification\"],\"Reopened\":[\"Risk Accepted\",\"In Progress\"," +
+            "\"Invalid\"],\"In Testing (Prestaging)\":[\"Reopened\",\"Verified in pre-staging\"," +
+            "\"Deployed to few customers\"],\"Reporter verification\":[\"Closed\"],\"Deferred\":[\"Reopened\"]," +
+            "\"Security Verification In Progress\":[\"Security Verified\"]," +
+            "\"Verified in pre-staging\":[\"In Testing (Staging)\",\"Deployed to few customers\"]," +
+            "\"In Progress\":[\"Risk Accepted\",\"In Review \"],\"In Review \":[\"Risk Accepted\"," +
+            "\"Dev Complete\",\"Review Changes Required\",\"In Progress\"]," +
+            "\"Available to all customers\":[\"Done\"],\"Open\":[\"Risk Accepted\",\"In Progress\"," +
+            "\"Invalid\"],\"On Hold \":[\"In Progress\"],\"Ready to Test\":[\"In Testing (Branch)\"," +
+            "\"Reopened\"],\"In Testing (Staging)\":[\"Reopened\",\"Deployed to few customers\"]," +
+            "\"Dev Complete\":[\"On Hold \",\"Ready to Test\"],\"Closed\":[\"Reopened\",\"Invalid\"]," +
+            "\"Review Changes Required\":[\"In Progress\"],\"Verified in Branch\":[\"In Testing (Prestaging)\"]," +
+            "\"Deployed to few customers\":[\"Available to all customers\"],\"Invalid\":[\"Reopened\"]}," +
+            "\"openStatuses\":[\"Reopened\",\"Open\"],\"resolvedStatuses\":[\"Deployed to few customers\"," +
+            "\"Available to all customers\",\"Done\"],\"closedStatuses\":[\"Closed\",\"Security Verified\"]," +
+            "\"ignorableLabels\":[],\"ignorableStatuses\":[\"Risk Accepted\",\"Invalid\"]," +
+            "\"toOpen\":{\"statusTransferable\":false,\"commentable\":true,\"commentInterval\":30.0}," +
+            "\"toClose\":{\"statusTransferable\":true,\"commentable\":true,\"commentInterval\":15.0}}";
 
     private static transient BugAuditConfig config;
 
@@ -65,14 +88,35 @@ final class BugAuditConfig {
         return contentBuilder.toString();
     }
 
+    private static String getConfigFromURL(String remoteConfigURL) throws IOException {
+        StringBuilder result = new StringBuilder();
+        URL url = new URL(remoteConfigURL);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        String line;
+        while ((line = rd.readLine()) != null) {
+            result.append(line).append("\n");
+        }
+        rd.close();
+        return result.toString();
+    }
+
     static synchronized BugAuditConfig getConfig() throws BugAuditException, IOException {
         if (config == null) {
-            String configFilePath = System.getenv(batConfigFileEnv);
-            if (configFilePath == null || configFilePath.isEmpty()) {
-                configFilePath = defaultBatConfigFilePath;
+            String configJson = null;
+            String configFilePath = System.getenv(bugauditConfigFileEnv);
+            if (configFilePath != null && !configFilePath.isEmpty()) {
+                configJson = readFromFile(new File(configFilePath));
             }
-            String jsonConfig = readFromFile(new File(configFilePath));
-            config = gson.fromJson(jsonConfig, BugAuditConfig.class);
+            String configURL = System.getenv(bugauditConfigURLEnv);
+            if ((configJson == null || configJson.isEmpty()) && configURL != null && !configURL.isEmpty()) {
+                configJson = getConfigFromURL(configURL);
+            }
+            if (configJson == null || configJson.isEmpty()) {
+                configJson = defaultConfigJson;
+            }
+            config = gson.fromJson(configJson, BugAuditConfig.class);
             config.validate();
         }
         return config;
