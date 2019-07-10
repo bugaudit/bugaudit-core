@@ -21,8 +21,7 @@ final class BugAuditConfig {
     static transient final String closingNotificationComment = "Closing this issue after verification.";
     static transient final String reopeningNotificationComment = "Reopening this issue as it is not fixed.";
 
-    private static transient final String bugauditConfigFileEnv = "BUGAUDIT_CONFIG";
-    private static transient final String bugauditConfigURLEnv = "BUGAUDIT_CONFIG_URL";
+    private static transient final String bugauditConfigEnv = "BUGAUDIT_CONFIG";
     private static transient final String batProjectEnv = "BUGAUDIT_PROJECT";
     private static transient final String batIssueTypeEnv = "BUGAUDIT_ISSUETYPE";
     private static transient final String batAssigneeEnv = "BUGAUDIT_ASSIGNEE";
@@ -105,13 +104,14 @@ final class BugAuditConfig {
     static synchronized BugAuditConfig getConfig() throws BugAuditException, IOException {
         if (config == null) {
             String configJson = null;
-            String configFilePath = System.getenv(bugauditConfigFileEnv);
-            if (configFilePath != null && !configFilePath.isEmpty()) {
-                configJson = readFromFile(new File(configFilePath));
-            }
-            String configURL = System.getenv(bugauditConfigURLEnv);
-            if ((configJson == null || configJson.isEmpty()) && configURL != null && !configURL.isEmpty()) {
-                configJson = getConfigFromURL(configURL);
+            String configURI = System.getenv(bugauditConfigEnv);
+            if (configURI != null && !configURI.isEmpty()) {
+                if (configURI.trim().toLowerCase().startsWith("http://") ||
+                        configURI.trim().toLowerCase().startsWith("https://")) {
+                    configJson = getConfigFromURL(configURI);
+                } else {
+                    configJson = readFromFile(new File(configURI));
+                }
             }
             if (configJson == null || configJson.isEmpty()) {
                 configJson = defaultConfigJson;
