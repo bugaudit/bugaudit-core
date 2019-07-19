@@ -265,7 +265,7 @@ final class BugAuditWorker {
     }
 
     void processResult() throws BugAuditException {
-        System.out.println("Vulnerabilities found: " + scanResult.getBugs().size());
+        System.out.println("Issues Identified (" + scanResult.getTool() + "): " + scanResult.getBugs().size());
         for (Bug bug : scanResult.getBugs()) {
             try {
                 processBug(bug, scanResult);
