@@ -27,30 +27,6 @@ final class BugAuditConfig {
     private static transient final String batAssigneeEnv = "BUGAUDIT_ASSIGNEE";
     private static transient final String batSubscribersEnv = "BUGAUDIT_SUBSCRIBERS";
     private static transient final Gson gson = new GsonBuilder().create();
-    private static transient final String defaultConfigJson = "{\"summaryUpdateAllowed\":true," +
-            "\"descriptionUpdateAllowed\":true,\"reprioritizeAllowed\":true,\"deprioritizeAllowed\":false," +
-            "\"priorityMap\":{\"Urgent\":1.0,\"High\":2.0,\"Medium\":3.0,\"Low\":4.0}," +
-            "\"transitions\":{\"In Testing (Branch)\":[\"Reopened\",\"Verified in Branch\"]," +
-            "\"Risk Accepted\":[\"Reopened\",\"In Progress\"],\"Done\":[\"Reopened\"," +
-            "\"Security Verification In Progress\"],\"Security Verified\":[\"Closed\"," +
-            "\"Reporter verification\"],\"Reopened\":[\"Risk Accepted\",\"In Progress\"," +
-            "\"Invalid\"],\"In Testing (Prestaging)\":[\"Reopened\",\"Verified in pre-staging\"," +
-            "\"Deployed to few customers\"],\"Reporter verification\":[\"Closed\"],\"Deferred\":[\"Reopened\"]," +
-            "\"Security Verification In Progress\":[\"Security Verified\"]," +
-            "\"Verified in pre-staging\":[\"In Testing (Staging)\",\"Deployed to few customers\"]," +
-            "\"In Progress\":[\"Risk Accepted\",\"In Review \"],\"In Review \":[\"Risk Accepted\"," +
-            "\"Dev Complete\",\"Review Changes Required\",\"In Progress\"]," +
-            "\"Available to all customers\":[\"Done\"],\"Open\":[\"Risk Accepted\",\"In Progress\"," +
-            "\"Invalid\"],\"On Hold \":[\"In Progress\"],\"Ready to Test\":[\"In Testing (Branch)\"," +
-            "\"Reopened\"],\"In Testing (Staging)\":[\"Reopened\",\"Deployed to few customers\"]," +
-            "\"Dev Complete\":[\"On Hold \",\"Ready to Test\"],\"Closed\":[\"Reopened\",\"Invalid\"]," +
-            "\"Review Changes Required\":[\"In Progress\"],\"Verified in Branch\":[\"In Testing (Prestaging)\"]," +
-            "\"Deployed to few customers\":[\"Available to all customers\"],\"Invalid\":[\"Reopened\"]}," +
-            "\"openStatuses\":[\"Reopened\",\"Open\"],\"resolvedStatuses\":[\"Deployed to few customers\"," +
-            "\"Available to all customers\",\"Done\"],\"closedStatuses\":[\"Closed\",\"Security Verified\"]," +
-            "\"ignorableLabels\":[],\"ignorableStatuses\":[\"Risk Accepted\",\"Invalid\"]," +
-            "\"toOpen\":{\"statusTransferable\":false,\"commentable\":true,\"commentInterval\":30.0}," +
-            "\"toClose\":{\"statusTransferable\":true,\"commentable\":true,\"commentInterval\":15.0}}";
 
     private static transient BugAuditConfig config;
 
@@ -114,7 +90,8 @@ final class BugAuditConfig {
                 }
             }
             if (configJson == null || configJson.isEmpty()) {
-                configJson = defaultConfigJson;
+                throw new BugAuditException("Please provide a valid config file or URL through " +
+                        bugauditConfigEnv + " environment variable.");
             }
             config = gson.fromJson(configJson, BugAuditConfig.class);
             config.validate();
