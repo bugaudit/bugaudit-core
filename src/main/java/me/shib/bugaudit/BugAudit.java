@@ -1,15 +1,15 @@
 package me.shib.bugaudit;
 
+import me.shib.bugaudit.commons.BugAuditException;
 import me.shib.bugaudit.scanner.BugAuditScanner;
 import me.shib.bugaudit.scanner.GitRepo;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public final class BugAudit {
 
-    public static synchronized List<Exception> audit() throws IOException {
+    public static synchronized List<Exception> audit() throws BugAuditException {
         List<Exception> exceptions = new ArrayList<>();
         List<BugAuditScanner> scanners = BugAuditScanner.getScanners(GitRepo.getRepo());
         List<BugAuditWorker.ProcessedCount> processedCounts = new ArrayList<>();
