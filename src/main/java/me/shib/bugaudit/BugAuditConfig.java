@@ -191,6 +191,10 @@ final class BugAuditConfig {
             return path;
         }
         List<List<String>> temp = new ArrayList<>();
+        List<String> forwardStatuses = transitions.get(fromStatus);
+        if (forwardStatuses == null) {
+            System.out.println("Unable to find transitions for status: " + fromStatus);
+        }
         for (String status : transitions.get(fromStatus)) {
             List<String> current = getTransitionPath(new ArrayList<>(path), status, toStatuses);
             if (current.size() > 0 && toStatuses.contains(current.get(current.size() - 1))) {
