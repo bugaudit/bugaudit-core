@@ -39,15 +39,10 @@ public final class BugAudit {
             updated += processedCount.getUpdated();
             commented += processedCount.getCommented();
         }
-        StringBuilder changelog = new StringBuilder();
-        changelog.append("\n[BUILD CHANGELOG]");
-        if (created == 0 && updated == 0 && commented == 0) {
-            changelog.append(" No change(s)");
-        } else {
-            changelog.append(" Created(").append(created).append(")")
-                    .append(" Updated(").append(updated).append(")")
-                    .append(" Commented(").append(commented).append(")");
-        }
+        String changelog = "\n[BUILD CHANGELOG]" +
+                " Created(" + created + ")" +
+                " Updated(" + updated + ")" +
+                " Commented(" + commented + ")";
         System.out.println(changelog);
     }
 
