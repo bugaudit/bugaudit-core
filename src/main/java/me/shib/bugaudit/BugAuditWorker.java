@@ -159,7 +159,8 @@ final class BugAuditWorker {
         }
         System.out.println("Issue: " + issue.getKey() + " has been fixed.");
         boolean transitioned = false;
-        if (config.toClose().isStatusTransferable() && config.isClosingTransitionAllowedForStatus(issue.getStatus())) {
+        String originalStatus = issue.getStatus();
+        if (config.toClose().isStatusTransferable()) {
             List<String> transitions = config.getTransitionsToClose(issue.getStatus());
             System.out.println("Closing the issue " + issue.getKey() + ".");
             transitioned = transitionIssue(transitions, issue);
@@ -177,6 +178,9 @@ final class BugAuditWorker {
         if (transitioned) {
             if (!comment.toString().isEmpty()) {
                 comment.append("\n");
+            }
+            if (!config.isResolvedStatus(originalStatus)) {
+                comment.append(BugAuditConfig.autoResolvingNotificationComment + "\n");
             }
             comment.append(BugAuditConfig.closingNotificationComment);
         }

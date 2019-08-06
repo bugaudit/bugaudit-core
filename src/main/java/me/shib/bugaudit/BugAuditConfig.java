@@ -18,6 +18,7 @@ final class BugAuditConfig {
     static transient final String issueNotFixedComment = "Found that the issue is still not fixed.";
     static transient final String resolveRequestComment = "Please resolve this issue.";
     static transient final String reopenRequestComment = "Please reopen this issue.";
+    static transient final String autoResolvingNotificationComment = "Auto resolving this issue.";
     static transient final String closingNotificationComment = "Closing this issue after verification.";
     static transient final String reopeningNotificationComment = "Reopening this issue as it is not fixed.";
 
@@ -173,7 +174,7 @@ final class BugAuditConfig {
         return toClose;
     }
 
-    boolean isClosingTransitionAllowedForStatus(String currentStatus) {
+    boolean isResolvedStatus(String currentStatus) {
         for (String status : resolvedStatuses) {
             if (status.equalsIgnoreCase(currentStatus)) {
                 return true;
