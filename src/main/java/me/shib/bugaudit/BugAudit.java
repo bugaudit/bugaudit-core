@@ -16,7 +16,7 @@ public final class BugAudit {
         for (BugAuditScanner scanner : scanners) {
             try {
                 System.out.println("Now running scanner: " + scanner.getTool());
-                scanner.scan();
+                scanner.buildAndScan();
                 BugAuditWorker bugAuditWorker = new BugAuditWorker(scanner.getBugAuditScanResult());
                 bugAuditWorker.processResult();
                 processedCounts.add(bugAuditWorker.getProcessedCount());
