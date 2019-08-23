@@ -237,7 +237,6 @@ final class BugAuditWorker {
             }
         } catch (Exception e) {
             exceptions.add(e);
-            e.printStackTrace();
         }
         return false;
     }
