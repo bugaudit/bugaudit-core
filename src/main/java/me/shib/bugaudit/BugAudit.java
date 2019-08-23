@@ -3,6 +3,7 @@ package me.shib.bugaudit;
 import me.shib.bugaudit.commons.BugAuditException;
 import me.shib.bugaudit.scanner.BugAuditScanner;
 import me.shib.bugaudit.scanner.GitRepo;
+import me.shib.bugaudit.scanner.Lang;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,15 @@ public final class BugAudit {
 
     public static synchronized List<Exception> audit() throws BugAuditException {
         List<Exception> exceptions = new ArrayList<>();
-        List<BugAuditScanner> scanners = BugAuditScanner.getScanners(GitRepo.getRepo());
+        Lang lang = GitRepo.getRepo().getLang();
+        if (lang == null) {
+            lang = Lang.Unknown;
+        }
+        List<BugAuditScanner> scanners = BugAuditScanner.getScanners(lang);
+        if (scanners.size() == 0) {
+            System.out.println("No scanners available for " + lang);
+            System.exit(1);
+        }
         List<BugAuditWorker.ProcessedCount> processedCounts = new ArrayList<>();
         for (BugAuditScanner scanner : scanners) {
             try {
