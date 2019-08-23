@@ -268,8 +268,8 @@ final class BugAuditWorker {
                 tracker.getUpdatedIssues().size(), tracker.getCommentedIssues().size());
     }
 
-    void processResult() throws BugAuditException {
-        System.out.println("Issues Identified (" + scanResult.getTool() + "): " + scanResult.getBugs().size());
+    private void processIdentifiedBugs() {
+        System.out.println("\nProcessing scanned results...");
         for (Bug bug : scanResult.getBugs()) {
             try {
                 processBug(bug, scanResult);
@@ -278,7 +278,11 @@ final class BugAuditWorker {
                 exceptions.add(e);
             }
         }
+    }
+
+    private void verifyExistingNonClosedIssues() throws BugAuditException {
         if (config.isClosingAllowed()) {
+            System.out.println("\nVerifying if any existing issues are fixed...");
             BatSearchQuery searchQuery = new BatSearchQuery(BatSearchQuery.Condition.type, BatSearchQuery.Operator.matching, config.getIssueType());
             searchQuery.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, scanResult.getRepo().toString());
             searchQuery.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, scanResult.getTool());
@@ -299,6 +303,12 @@ final class BugAuditWorker {
                 }
             }
         }
+    }
+
+    void processResult() throws BugAuditException {
+        System.out.println("Issues Identified (" + scanResult.getTool() + "): " + scanResult.getBugs().size());
+        processIdentifiedBugs();
+        verifyExistingNonClosedIssues();
     }
 
     List<Exception> getExceptions() {
