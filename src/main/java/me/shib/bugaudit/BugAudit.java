@@ -5,12 +5,13 @@ import me.shib.bugaudit.scanner.BugAuditScanner;
 import me.shib.bugaudit.scanner.GitRepo;
 import me.shib.bugaudit.scanner.Lang;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public final class BugAudit {
 
-    public static synchronized List<Exception> audit() throws BugAuditException {
+    public static synchronized List<Exception> audit() throws BugAuditException, IOException, InterruptedException {
         List<Exception> exceptions = new ArrayList<>();
         Lang lang = GitRepo.getRepo().getLang();
         if (lang == null) {
@@ -22,10 +23,11 @@ public final class BugAudit {
             System.exit(1);
         }
         List<BugAuditWorker.ProcessedCount> processedCounts = new ArrayList<>();
+        BugAuditScanner.buildProject();
         for (BugAuditScanner scanner : scanners) {
             try {
                 System.out.println("Now running scanner: " + scanner.getTool());
-                scanner.buildAndScan();
+                scanner.scan();
                 BugAuditWorker bugAuditWorker = new BugAuditWorker(scanner.getBugAuditScanResult());
                 bugAuditWorker.processResult();
                 processedCounts.add(bugAuditWorker.getProcessedCount());
