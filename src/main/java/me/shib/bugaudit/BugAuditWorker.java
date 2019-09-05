@@ -289,9 +289,11 @@ final class BugAuditWorker {
             searchQuery.add(BatSearchQuery.Condition.label, BatSearchQuery.Operator.matching, scanResult.getLang().toString());
             searchQuery.add(BatSearchQuery.Condition.status, BatSearchQuery.Operator.not_matching, config.getClosedStatuses());
             List<BatIssue> batIssues = tracker.searchBatIssues(config.getProject(), searchQuery);
+            int count = 0;
             for (BatIssue batIssue : batIssues) {
                 try {
                     if (!isVulnerabilityExists(batIssue, scanResult.getBugs())) {
+                        count++;
                         if (!closeIssue(batIssue)) {
                             System.out.println(batIssue.getKey() + ": No action taken now.");
                         }
@@ -300,6 +302,9 @@ final class BugAuditWorker {
                     e.printStackTrace();
                     exceptions.add(e);
                 }
+            }
+            if (count == 0) {
+                System.out.println("No relevant issues found to resolve/close.");
             }
         }
     }
