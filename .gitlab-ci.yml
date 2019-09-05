@@ -4,10 +4,19 @@ variables:
   MAVEN_CLI_OPTS: "-s .m2/settings.xml --batch-mode"
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
 
-Deploying to Bintray:
-  stage: deploy
+stages:
+  - "Maven Build"
+  - "BugAudit Platform Build"
+
+Publishing to Bintray:
+  stage: "Maven Build"
   script:
-    - curl -L -s http://shibme.github.io/gitlab-ci-maven-dependency-builder/build-dependency.sh | bash -s shibme/freshrelease-api
     - mvn $MAVEN_CLI_OPTS clean deploy
+  only:
+    - master
+
+BugAudit CLI Build:
+  stage: "BugAudit Platform Build"
+  trigger: bugaudit/bugaudit-cli
   only:
     - master
