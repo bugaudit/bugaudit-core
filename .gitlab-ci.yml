@@ -6,7 +6,7 @@ variables:
 
 stages:
   - "Maven Build"
-  - "BugAudit Platform Build"
+  - "Downstream Triggers"
 
 Publishing to Bintray:
   stage: "Maven Build"
@@ -15,8 +15,8 @@ Publishing to Bintray:
   only:
     - master
 
-BugAudit CLI Build:
-  stage: "BugAudit Platform Build"
+BugAudit CLI Builder:
+  stage: "Downstream Triggers"
   trigger: bugaudit/bugaudit-cli
   only:
     - master
