@@ -15,7 +15,8 @@ public final class BugAudit {
         List<Exception> exceptions = new ArrayList<>();
         Lang lang = GitRepo.getRepo().getLang();
         if (lang == null) {
-            lang = Lang.Unknown;
+            System.out.println("Terminating as the programming language could not be identified.");
+            System.exit(1);
         }
         List<BugAuditScanner> scanners = BugAuditScanner.getScanners(lang);
         if (scanners.size() == 0) {
